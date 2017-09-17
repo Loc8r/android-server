@@ -7,7 +7,6 @@ import android.provider.Telephony;
 import android.telephony.SmsMessage;
 import android.util.Log;
 
-import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -24,11 +23,13 @@ public class SmsReceiver extends BroadcastReceiver {
 				Log.d(LOG_TAG, "onReceive: " + messageBody); // e.g. "56.029349,34.659283"
 				String[] coords = messageBody.split(",");
 				try {
-					LatLng latLng = new LatLng(Double.parseDouble(coords[0]), Double.parseDouble(coords[1]));
+					double lat = Double.parseDouble(coords[0]);
+					double lon = Double.parseDouble(coords[1]);
 
 					DatabaseReference ref = FirebaseDatabase.getInstance().getReference()
-							.child("users").child(phoneNumber).child("locationHistory");
-					ref.push().setValue(latLng);
+							.child("users").child(phoneNumber).child("locationHistory").push();
+					ref.child("lat").setValue(lat);
+					ref.child("lon").setValue(lon);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
